@@ -156,8 +156,12 @@ app
         return;
       }
 
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(sdlc));
+      var data = JSON.stringify(sdlc)
+
+      res.setHeader('Content-Type', 'application/json');
+      res.send(data);
+
+      pub.publish(req.params.id, data);
     });
   });
 
@@ -171,12 +175,17 @@ var io = socketIO(httpServer)
 
 // socket handlers
 io.on('connection', socket => {
-  socket.on('subscribe', data => {
-    log.log(data);
-    var sub = new Redis();
-    sub.on(data.projectID, (channel, message) => {
-      log.log('Receive message %s from channel %s', message, channel);
-      socket.emit('data', message);
+  socket.on('subscribe', (projectID) => {
+    var sub = new Redis('redis://:css553@pub-redis-14314.us-east-1-4.4.ec2.garantiadata.com:14314');
+
+    sub.subscribe(projectID, (err, count) => {
+      if (err) {
+        log.error('subscribe error', {channel: projectID, err});
+      }
+    });
+
+    sub.on('message', (channel, data) => {
+      socket.emit('data', JSON.parse(data));
     });
   });
 });

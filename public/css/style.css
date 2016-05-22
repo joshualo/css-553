@@ -2645,6 +2645,9 @@ a.forum-item-title:hover {
 #vertical-timeline.light-timeline:before {
   background: #e7eaec;
 }
+.selected .vertical-timeline-content {
+  background-color: #f8ac59;
+}
 .dark-timeline .vertical-timeline-content:before {
   border-color: transparent #f5f5f5 transparent transparent;
 }

@@ -107,3 +107,13 @@ html
       });
     // Custom and plugin javascript
     script(src='/js/plugins/pace/pace.min.js')
+    // Socket.IO
+    script(src='/socket.io/socket.io.js')
+    script.
+      var socket = io();
+
+      socket.on('data', function(data) {
+        console.log(data);
+      });
+
+      socket.emit('subscribe', '#{project._id}');
