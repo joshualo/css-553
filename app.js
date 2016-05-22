@@ -78,6 +78,14 @@ app
   // get a project
   .get('/projects/:id', (req, res, next) => {
     Project.findById(req.params.id, (err, project) => {
+      if (err) {
+        log.error('findById error', {route: '/project', method: 'POST', id: req.params.id, err});
+
+        res.locals.err = 'There was a problem retrieving your project. Please try again later.'
+        res.render('home.jade')
+        return;
+      }
+
       res.locals.project = project;
       res.render('project.jade');
     });
@@ -102,7 +110,7 @@ app
         return;
       }
 
-      res.redirect('/projects/${project._id}');
+      res.redirect(`/projects/${project._id}`);
     })
   })
 
@@ -174,7 +182,7 @@ io.on('connection', socket => {
 });
 
 // start it up
-httpServer.listen(8080, () => {
+httpServer.listen(process.env.PORT || 8080, () => {
   var host = httpServer.address().address;
   var port = httpServer.address().port;
   log.info('Web server started', {host, port});
