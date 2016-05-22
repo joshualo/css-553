@@ -127,6 +127,7 @@ app
 
       if (!sdlc) {
         var sdlc = new SDLC();
+        sdlc._id = req.params.id;
         sdlc.save(err => {
           if (err) {
             log.error('save error', {route: '/sdlc', method: 'GET', err});

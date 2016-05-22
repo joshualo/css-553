@@ -171,7 +171,10 @@ html
 
       socket.emit('subscribe', '#{sdlc._id}');
 
+      onStatusUpdate('#{sdlc.status}')
+
       function onStatusUpdate(status) {
+        status = parseInt(status, 10);
         var selected = $('.selected');
 
         var newSelected;
