@@ -10,7 +10,6 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   jade = require('jade'),
   mongoose = require('mongoose'),
-  Redis = require('ioredis'),
   log = require('winston'),
   Project = require('./src/models/project'),
   SDLC = require('./src/models/sdlc');
@@ -38,11 +37,6 @@ mongoose.connect(mongoLocation, err => {
 
 var DOCUMENT_EXISTS_ERR = 11000;
 var UNIQUE_KEY_EXISTS_ERR = 11001;
-
-//----------
-// Initialize the default publisher connection for Redis
-//----------
-var pub = new Redis('redis://:css553@pub-redis-14314.us-east-1-4.4.ec2.garantiadata.com:14314');
 
 //----------
 // Setup up the express application and connect routes.
@@ -157,12 +151,10 @@ app
         return;
       }
 
-      var data = JSON.stringify(sdlc)
-
       res.setHeader('Content-Type', 'application/json');
-      res.send(data);
+      res.send(sdlc);
 
-      pub.publish(req.params.id, data);
+      io.to(req.params.id).emit('data', sdlc);
     });
   });
 
@@ -177,17 +169,7 @@ var io = socketIO(httpServer)
 // socket handlers
 io.on('connection', socket => {
   socket.on('subscribe', (projectID) => {
-    var sub = new Redis('redis://:css553@pub-redis-14314.us-east-1-4.4.ec2.garantiadata.com:14314');
-
-    sub.subscribe(projectID, (err, count) => {
-      if (err) {
-        log.error('subscribe error', {channel: projectID, err});
-      }
-    });
-
-    sub.on('message', (channel, data) => {
-      socket.emit('data', JSON.parse(data));
-    });
+    socket.join(projectID)
   });
 });
 
