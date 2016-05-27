@@ -1,0 +1,77 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title The Three of Us - Project Dashboard
+    link(href='/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/font-awesome/css/font-awesome.css', rel='stylesheet')
+    link(href='/css/plugins/iCheck/custom.css', rel='stylesheet')
+    link(href='/css/animate.css', rel='stylesheet')
+    link(href='/css/plugins/codemirror/codemirror.css', rel='stylesheet')
+    link(href='/css/plugins/codemirror/ambiance.css', rel='stylesheet')
+    link(href='/css/style.css', rel='stylesheet')
+  body
+    #wrapper
+      #page-wrapper.gray-bg
+        .wrapper.wrapper-content.animated.fadeInRight
+          .row
+            .col-lg-2
+              a(href='/')
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4
+                      i.fa.fa-folder-open-o.fa-5x
+                    .col-xs-8.text-right
+                      span Project Manager
+            .col-lg-2
+              a(href='/projects/#{projectID}')
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4
+                      i.fa.fa-code.fa-5x
+                    .col-xs-8.text-right
+                      span Code editor
+            .col-lg-2
+              a(href='/sdlc/#{projectID}')
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4
+                      i.fa.fa-info-circle.fa-5x
+                    .col-xs-8.text-right
+                      span Software Development Life Cycle Guide
+            .col-lg-2
+              a(href='/agile-board/#{projectID}')
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4
+                      i.fa.fa-list-ul.fa-5x
+                    .col-xs-8.text-right
+                      span Agile Board
+            .col-lg-2
+              a
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4
+                      i.fa.fa-pencil-square-o.fa-5x
+                    .col-xs-8.text-right
+                      span Code Review
+            .col-lg-2
+              a
+                .widget.style1.yellow-bg
+                  .row
+                    .col-xs-4.text-center
+                      i.fa.fa-exclamation-triangle.fa-5x
+                    .col-xs-8.text-right
+                      span Unit Testing
+          block content
+
+    // Mainly scripts
+    script(src='/js/jquery-2.1.1.js')
+    script(src='/js/jquery-ui-1.10.4.min.js')
+    script(src='/js/bootstrap.min.js')
+    script(src='/js/plugins/metisMenu/jquery.metisMenu.js')
+    script(src='/js/plugins/slimscroll/jquery.slimscroll.min.js')
+    // Custom and plugin javascript
+    script(src='/js/plugins/pace/pace.min.js')
+    block scripts
