@@ -80,6 +80,7 @@ app
         return;
       }
 
+      res.locals.projectID = req.params.id;
       res.locals.project = project;
       res.render('project.jade');
     });
@@ -133,6 +134,7 @@ app
         })
       }
 
+      res.locals.projectID = req.params.id;
       res.locals.sdlc = sdlc;
       res.render('sdlc.jade');
     });
@@ -154,9 +156,19 @@ app
       res.setHeader('Content-Type', 'application/json');
       res.send(sdlc);
 
-      io.to(req.params.id).emit('data', sdlc);
+      io.to(req.params.id).emit('sdlc', sdlc);
     });
-  });
+  })
+  // get sdlc for project
+  .get('/agile-board/:id', (req, res, next) => {
+
+    res.locals.projectID = req.params.id;
+    res.render('agile-board.jade');
+  })
+  // get sdlc for project
+  .get('/agile-board/:id', (req, res, next) => {
+  })
+  ;
 
 //----------
 // Setup an HTTP server, attach our express application
