@@ -23,4 +23,4 @@ var schema = new mongoose.Schema({
 
 schema.statics.Step = Step;
 
-var SDLC = module.exports = mongoose.model('sdlc', schema);
+module.exports = mongoose.model('SDLC', schema);

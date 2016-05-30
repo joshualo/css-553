@@ -13,4 +13,4 @@ var schema = new mongoose.Schema({
   description: {type: String, trim: true, required: true},
 });
 
-var Project = module.exports = mongoose.model('Project', schema);
+module.exports = mongoose.model('Project', schema);

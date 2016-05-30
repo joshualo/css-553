@@ -1658,6 +1658,17 @@ div.dt-button-info {
 .show-grid {
   margin: 15px 0;
 }
+
+.scrollingGrid.row {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.scrollingGrid [class*="col"] {
+    display: inline-block;
+    float: none;
+    vertical-align: text-top;
+    white-space: normal;
+}
 /* ANIMATION */
 .css-animation-box h1 {
   font-size: 44px;

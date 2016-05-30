@@ -12,7 +12,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   log = require('winston'),
   Project = require('./src/models/project'),
-  SDLC = require('./src/models/sdlc');
+  SDLC = require('./src/models/sdlc'),
+  AgileBoard = require('./src/models/agile-board');
 
 //----------
 // Initialize the logger
@@ -159,14 +160,56 @@ app
       io.to(req.params.id).emit('sdlc', sdlc);
     });
   })
-  // get sdlc for project
+  // get agile-board for project
   .get('/agile-board/:id', (req, res, next) => {
+    AgileBoard.findById(req.params.id, (err, agileBoard) => {
+      if (err) {
+        log.error('find error', {route: '/agile-board', method: 'GET', err});
 
-    res.locals.projectID = req.params.id;
-    res.render('agile-board.jade');
+        res.locals.err = 'There was a problem retrieving the agile board tool for your project. Please try again later.'
+        res.redirect('/projects/${req.params.id}');
+        return;
+      }
+
+      if (!agileBoard) {
+        var agileBoard = new AgileBoard();
+        agileBoard._id = req.params.id;
+        agileBoard.save(err => {
+          if (err) {
+            log.error('save error', {route: '/agile-board', method: 'GET', err});
+
+            res.locals.err = 'There was a problem retrieving the agile board tool for your project. Please try again later.'
+            res.redirect('/projects/${req.params.id}');
+            return;
+          }
+        })
+      }
+
+      res.locals.projectID = req.params.id;
+      res.locals.agileBoard = agileBoard;
+      res.render('agile-board.jade');
+    });
   })
-  // get sdlc for project
-  .get('/agile-board/:id', (req, res, next) => {
+  // post sdlc for project
+  .post('/agile-board/:id', (req, res, next) => {
+    var agileBoardInfo = req.body;
+
+    console.log(req.body.lanes)
+
+    AgileBoard.findByIdAndUpdate(req.params.id, {$set: agileBoardInfo}, {new: true}, function (err, agileBoard) {
+      if (err) {
+        log.error('findByIdAndUpdate error', {route: '/agile-board', method: 'POST', id: req.params.id, err});
+
+        res.locals.err = 'There was a problem updating the agile board tool for your project. Please try again later.'
+        res.redirect('/agile-board/${req.params.id}');
+        return;
+      }
+
+      res.setHeader('Content-Type', 'application/json');
+      res.send(agileBoard);
+
+      io.to(req.params.id).emit('agile-board', agileBoard);
+    });
   })
   ;
 

@@ -88,7 +88,7 @@ block content
 block scripts
   script.
     function changeStatus(status) {
-      $.post( '/sdlc/#{sdlc._id}', {status}, function(data) {
+      $.post( '/sdlc/#{projectID}', {status}, function(data) {
         updateStatus(status)
       }, 'json');
     }
@@ -101,7 +101,7 @@ block scripts
       updateStatus(data.status)
     });
 
-    socket.emit('subscribe', '#{sdlc._id}');
+    socket.emit('subscribe', '#{projectID}');
 
     updateStatus('#{sdlc.status}')
 
