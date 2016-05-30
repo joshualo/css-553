@@ -1,0 +1,87 @@
+extends ./layout.jade
+
+block content
+  .wrapper.wrapper-content.animated.fadeInRight
+    .row.scrollingGrid(ng-app="agileBoard", ng-controller="myCtrl")
+      .col-lg-3(ng-repeat='lane in lanes')
+        .ibox
+          .ibox-content
+            h3 {{lane.title}}
+            ul.connectList.agile-list(ui-sortable="sortableOptions" ng-model='lanes[$index].items')
+              li.info-element(ng-repeat='item in lanes[$index].items')
+                h4 {{item.title}}
+                .agile-detail
+                  | {{item.details}}
+            .modal.inmodal(tabindex='-1', role='dialog', aria-hidden='true', ng-attr-id='{{"modal-" + $index}}')
+              .modal-dialog
+                .modal-content.animated.bounceInRight
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal')
+                      span(aria-hidden='true') ×
+                      span.sr-only Close
+                    i.fa.fa-laptop.modal-icon
+                    h4.modal-title New item for {{lane.title}}
+                  .modal-body
+                    .form-group
+                      label Item title
+                      input.form-control(type='text', name='title', placeholder='Enter a title', ng-model="newItem.title")
+                    .form-group
+                      label Item details
+                      textarea.form-control(type='text', name='details', rows=5, placeholder='Enter item details', ng-model="newItem.details")
+                    .form-group
+                      label Priority
+                      select.form-control(type='text', placeholder='Select priority', ng-model="newItem.priority")
+                        option(value='0', selected) NONE
+                        option(value='1') NOW
+                        option(value='2') MUST
+                        option(value='3') NEED
+                        option(value='4') WANT
+                        option(value='5') LIKE
+                  .modal-footer
+                    button.btn.btn-primary(data-dismiss='modal', ng-click='addItem(lane, newItem.title, newItem.details, newItem.priority)') Save
+            a(type='button', data-toggle='modal', data-target='{{"#modal-" + $index}}')
+              | Add item
+      .col-lg-3
+        .ibox
+          .ibox-content
+            .input-group
+              input.form-control(type='text', name='new-list', placeholder='Add a list...', ng-model="newLane.title")
+              button.btn.btn-sm.btn-success.m-t-sm(ng-click='addLane(newLane.title)')
+                strong Create
+
+block scripts
+  script(src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js")
+  script(src="https://rawgithub.com/angular-ui/ui-sortable/master/src/sortable.js")
+  // Socket.IO
+  script(src='/socket.io/socket.io.js')
+  script.
+    var socket = io();
+
+    socket.on('agile-board', function(data) {
+      var appElement = document.querySelector('[ng-app=agileBoard]');
+      var $scope = angular.element(appElement).scope();
+      $scope.$apply(function() {
+        $scope.lanes = data.lanes;
+      });
+    });
+
+    socket.emit('subscribe', '#{projectID}');
+
+    var app = angular.module('agileBoard', ['ui.sortable']);
+    app.controller('myCtrl', function($scope) {
+      $scope.lanes = !{JSON.stringify(agileBoard)}.lanes;
+      $scope.sortableOptions = {
+        connectWith: ".connectList",
+        stop: function(e, ui) {
+          $.post( '/agile-board/#{projectID}', {lanes: $scope.lanes}, function(data) {}, 'json');
+        }
+      };
+      $scope.addLane = function(title) {
+        $scope.lanes.push({title, items: []});
+        $.post( '/agile-board/#{projectID}', {lanes: $scope.lanes}, function(data) {}, 'json');
+      };
+      $scope.addItem = function(lane, title, details, priority) {
+        lane.items.push({title, details, priority: parseInt(priority, 10)});
+        $.post( '/agile-board/#{projectID}', {lanes: $scope.lanes}, function(data) {}, 'json');
+      }
+    });

@@ -1669,6 +1669,10 @@ div.dt-button-info {
     vertical-align: text-top;
     white-space: normal;
 }
+.connectList {
+  padding-bottom: 5px;
+  padding-left: 0px;
+}
 /* ANIMATION */
 .css-animation-box h1 {
   font-size: 44px;
